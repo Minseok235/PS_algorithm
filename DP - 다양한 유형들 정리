@@ -1,0 +1,56 @@
+DP(Dynamic Programming)에는 다양한 DP 테이블 정의의 유형들이 있다.
+
+1. 일차원 D[i] 유형, 가장 기본적인 DP table로 대표적인 문제로 피보나치 수열 등이 있다.
+for (int i=2; i<=N; i++){
+    D[i] = D[i-1]+D[i-2]
+}
+위의 테이블을 이용하여 N번째 피보나치 수를 구할 수 있다!
+
+2. 이차원 D[i][j], j=0,1,2 -> 특정 상태가 다음 배열에 영향을 미칠때, 대표적인 문제로 RGB거리 문제가 있다.
+RGB거리에서 특정 상태란 앞에 건물의 칠한 색깔이다. 그래서 j를 색깔의 개수 만큼 만들어준다.
+D[1][0] = R[1], D[1][1] = G[1], D[1][2] = B[1]
+for (int i=1; i<=N; i++){
+    D[i][0] = min(D[i-1][1], D[i-1][2]) + R[i]
+    D[i][1] = min(D[i-1][0],D[i-1][2]) + G[i];
+    D[i][2] = min(D[i-1][0],D[i-1][1]) + B[i];
+}
+int ans = min(D[N][0],min(D[N][1],D[N][2]));
+
+3. 일차원 D[i] -> i번째 숫자를 "마지막"으로 설정하고 그 앞에서 문제의 따라서 무언가를 할때, 대표적인 문제로 LIS(Longest Increasing Sequence)가 있다.
+LIS에서의 D[i] 정의는 i번째 숫자를 마지막으로 하는 가장 긴 증가하는 부분수열의 길이이다. 
+for (int i=1; i<=N; i++){
+    int m = 0;
+    for (int j=1; j<=i-1; j+){
+        if (A[i]>A[j]){
+            if (m < D[j]){
+                m = D[j];
+            }
+        }
+    }
+    D[i] = m+1;
+}
+
+4. 이차원 D[i][j] -> 문자열 A[1~i]와 문자열 B[1~j]의 관계를 이용할 때, 대표적인 문제로 LCS(Longest Common Sequence)가 있다.
+LCS에서의 D[i][j] 정의는 문자열 A[1~i]와 문자열 B[1~j]의 LCS의 길이이다.
+for (int i=0; i<len1; i++){    //len1: str1의 길이, len2: str2의 길이
+     for (int j=0; j<len2; j++){
+          if (str1[i] == str2[j]){
+              D[i][j] = max(max(D[i-1][j], D[i][j-1]),D[i-1][j-1]+1);
+          }
+          else{
+              D[i][j] = max(D[i-1][j], D[i][j-1]);
+          }
+     }
+}
+
+5. 이차원 D[i][j] -> A(i)~A(j)까지 계산(곱셈,덧셈...)의 최솟값,최대값, 대표적인 문제로 행렬곱셈(matrix multiplication)이 있다.
+행렬곱셈에서의 D[i][j] 정의는 행렬 A(i)*A(i+1)*...A(j)까지 계산하는데 필요한 최소 연산 횟수이다.
+for (int d=1; d<=N-1; d++){
+     for (int i=1; i<=N-d; i++){
+          int j= i+d;
+          D[i][j] = LLONG_MAX;      //초기화
+          for (int k=i; k<=j-1; k++){
+              D[i][j] = min(D[i][j], D[i][k]+D[k+1][j]+matrix[i].first*matrix[k].second*matrix[j].second);
+          }
+     }
+}
